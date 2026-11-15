@@ -26,19 +26,16 @@ CNU 2026-2 강화학습 텀 프로젝트.
 
 ## 진행 상태
 
-현재 단계: **research**
+현재 단계: **plan**
 
 | 단계 | 상태 |
 |---|---|
-| research | 진행 중 |
-| plan | 대기 |
+| research | 완료 |
+| plan | 진행 중 |
 | implementation | 대기 |
 | analysis | 대기 |
 | report | 대기 |
 
 ## 일정
 
-- 11/9~15: 교전 환경과 PN 베이스라인 구현
-- 11/16~22: Q-learning, 이어서 PPO
-- 11/23~29: 비교 실험과 그래프 정리 (실험 종료)
-- 11/30~12/8: 발표자료, 언리얼 영상(선택), 리허설
+`plan/05_schedule_and_risks.md` 참고.
