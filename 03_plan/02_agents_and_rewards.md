@@ -55,7 +55,7 @@ Stable-Baselines3의 `PPO`, `MlpPolicy`를 쓴다.
 
 ## 4. 보상
 
-네 가지를 정의한다. 근거는 `research/05_reward_design.md`다.
+네 가지를 정의한다. 근거는 `01_research/05_reward_design.md`다.
 
 | 이름 | 종단 보상 | 스텝 보상 | 성격 |
 |---|---|---|---|

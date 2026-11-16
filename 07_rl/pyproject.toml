@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guidance"
+version = "0.1.0"
+description = "2D intercept guidance: reinforcement learning vs proportional navigation"
+requires-python = ">=3.11"
+
+[tool.setuptools]
+packages = ["guidance"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

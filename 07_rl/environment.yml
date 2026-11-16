@@ -1,0 +1,12 @@
+name: rl-guidance
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - matplotlib
+  - pytest
+  - pip:
+      - gymnasium
+      - stable-baselines3

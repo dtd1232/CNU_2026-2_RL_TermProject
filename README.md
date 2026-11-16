@@ -14,28 +14,29 @@ CNU 2026-2 강화학습 텀 프로젝트.
 
 | 폴더 | 용도 |
 |---|---|
-| `research/` | 1단계. 배경 조사 정리 |
-| `plan/` | 2단계. 설계와 실험 계획 |
-| `implementation/` | 3단계. 구현 내용 기록 |
-| `analysis/` | 4단계. 실험 결과 분석 |
-| `report/` | 5단계. 발표자료와 최종 보고 |
-| `rl/` | 강화학습 개발 (파이썬 코드, 학습 결과) |
-| `unreal/` | 언리얼 개발 (프로젝트는 직접 생성·관리) |
+| `01_research/` | 배경 조사 정리 |
+| `02_spec/` | 실험 환경과 확정 수치 |
+| `03_plan/` | 설계와 실험 계획 |
+| `04_implementation/` | 구현 내용 기록 |
+| `05_analysis/` | 실험 결과 분석 |
+| `06_report/` | 발표자료와 최종 보고 |
+| `07_rl/` | 강화학습 개발 (파이썬 코드, 실험 결과) |
+| `08_unreal/` | 언리얼 개발 (프로젝트는 직접 생성·관리) |
 
-단계 폴더에는 문서(md)만 두고, 코드는 `rl/`과 `unreal/`에 둔다.
+문서 폴더(01~06)에는 md 문서만 두고, 코드는 `07_rl/`과 `08_unreal/`에 둔다.
 
 ## 진행 상태
 
-현재 단계: **plan**
+현재 단계: **implementation**
 
 | 단계 | 상태 |
 |---|---|
 | research | 완료 |
-| plan | 진행 중 |
-| implementation | 대기 |
+| plan | 완료 |
+| implementation | 진행 중 |
 | analysis | 대기 |
 | report | 대기 |
 
 ## 일정
 
-`plan/05_schedule_and_risks.md` 참고.
+`03_plan/05_schedule_and_risks.md` 참고.

@@ -1,6 +1,8 @@
-# plan
+# 03_plan
 
 2단계. 설계와 실험 계획.
+
+구현하면서 확정하거나 바꾼 값은 `02_spec/`에 있다. 이 폴더는 계획 시점의 기록으로 남긴다.
 
 ## 문서
 
@@ -9,7 +11,7 @@
 | [01_environment_spec.md](01_environment_spec.md) | 교전 모델, 수치, 난이도 보정, 초기 조건, 표적 기동, 관측과 행동 |
 | [02_agents_and_rewards.md](02_agents_and_rewards.md) | PN 베이스라인, Q-learning, PPO, 보상 4가지 |
 | [03_experiments.md](03_experiments.md) | 질문과 실험 E0~E7, 공통 규칙, 우선순위 |
-| [04_code_structure.md](04_code_structure.md) | `rl/` 폴더 구조, 의존성, 궤적 CSV 형식 |
+| [04_code_structure.md](04_code_structure.md) | `07_rl/` 폴더 구조, 의존성, 궤적 CSV 형식 |
 | [05_schedule_and_risks.md](05_schedule_and_risks.md) | 일정, 계산 자원, 위험 요소와 대응 |
 
 ## 주요 결정

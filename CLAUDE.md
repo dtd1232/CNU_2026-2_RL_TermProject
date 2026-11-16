@@ -11,9 +11,11 @@ research → plan → implementation → analysis → report 순서로 진행한
 
 ## 폴더
 
-- 단계 폴더(`research/`, `plan/`, `implementation/`, `analysis/`, `report/`)에는 문서만 둔다.
-- 강화학습 코드는 `rl/`에 둔다.
-- `unreal/`은 사용자가 직접 언리얼 프로젝트를 생성하고 관리한다. 이 폴더 안은 건드리지 않는다.
+- 단계 폴더(`01_research/`, `03_plan/`, `04_implementation/`, `05_analysis/`, `06_report/`)에는 문서만 둔다.
+- `02_spec/`에는 실험 환경과 확정 수치를 둔다. 단계가 아니고, 구현이 바뀌면 함께 갱신한다. 계획 문서와 값이 다르면 `02_spec/`이 맞다.
+- 최상위 폴더 이름에는 번호를 붙인다.
+- 강화학습 코드는 `07_rl/`에 둔다. conda 환경은 `07_rl/setup_conda.sh`로 만든다.
+- `08_unreal/`은 사용자가 직접 언리얼 프로젝트를 생성하고 관리한다. 이 폴더 안은 건드리지 않는다.
 
 ## 보안
 
