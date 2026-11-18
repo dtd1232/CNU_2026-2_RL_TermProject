@@ -25,6 +25,10 @@ SNAPSHOTS = (0, 256, 1024, 4096)
 THREE = (0, 1, 2)
 GROUPS = {
     "main": [("base", "main", {}, (0, 1, 2, 3, 4))],
+    # The first 2048 episodes of the base run, evaluated every 64 episodes.
+    # eps_decay_frac is scaled so that epsilon follows the base schedule.
+    "early": [("base", "main", {"episodes": 2048, "eval_every": 64,
+                                "eps_decay_frac": 0.8 * 30000 / 2048}, (0, 1, 2, 3, 4))],
     "alpha": [(f"constant {a:g}", "main", {"alpha": a, "alpha_n0": None}, THREE)
               for a in (0.01, 0.05, 0.1, 0.5)],
     "gamma": [(f"{g:g}", "main", {"gamma": g}, THREE) for g in (0.9, 1.0)],

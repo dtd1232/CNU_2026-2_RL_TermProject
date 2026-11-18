@@ -65,12 +65,31 @@ PN 난이도 보정(E1)으로 정했다. 근거는 `04_implementation/01_environ
 - 연속: $[-1, 1]$. 가속도 한계를 곱한다.
 - 이산: $\{-1, -\tfrac23, -\tfrac13, 0, \tfrac13, \tfrac23, 1\}$의 7단계.
 
-## 7. 보상 상수
+## 7. 보상
 
-| 항목 | 값 |
-|---|---|
-| 명중 보너스 | +10 |
-| 빗나감 벌점 | 100 m당 −1, 최대 −10 |
-| `los_rate` 계수 $k$ | 0.01 (시험 실행에서 조정 예정) |
-| `los_rate`에서 PN 요구량 절단 | ±3 |
-| `potential`의 퍼텐셜 | $-R / R_0$, 종료 상태는 0 |
+| 이름 | 종단 보상 | 스텝 보상 |
+|---|---|---|
+| `hit_only` | 명중이면 +10 | 없음 |
+| `terminal` | 100 m당 −1(최대 −10), 명중이면 +10 | 없음 |
+| `potential` | `terminal`과 같음 | $\gamma\Phi(s') - \Phi(s)$, $\Phi = -R/R_0$, 종료 상태는 0 |
+| `los_rate` | `terminal`과 같음 | $-k x^2$, $k = 1.0$. $x$는 PN 요구량이고 ±3으로 자른다 |
+| `effort` | `terminal`과 같음 | $-k u^2$, $k = 0.05$. $u$는 가속도 한계 대비 명령 비율 |
+
+`los_rate`의 $k$는 계획의 0.01에서 1.0으로 올렸다. `effort`는 계획에 없던 보상으로, 구현하면서 추가했다. 근거는 `04_implementation/02_q_learning.md`다.
+
+## 8. Q-learning
+
+| 항목 | 값 | 코드 위치 |
+|---|---|---|
+| 상태 (Q1) | PN 요구량 $x = V_c\dot\lambda / a_{max}$의 21구간. 0.01~1 사이를 로그 간격으로 나눈 대칭 구간 | `discretize.X_EDGES` |
+| 상태 (Q2) | Q1 × 남은 시간 6구간 (경계 0.5, 1, 2, 4, 7초) | `discretize.TGO_EDGES` |
+| 행동 | 7단계 | `discretize.ACTIONS` |
+| 보상 | `los_rate` | `QConfig.reward_kind` |
+| 학습률 | $0.5 \times 100 / (100 + n)$. $n$은 해당 상태·행동의 갱신 횟수 | `QConfig.alpha`, `alpha_n0` |
+| 할인율 | 0.99 | `QConfig.gamma` |
+| 탐색 | $\epsilon$ 1.0에서 0.05까지, 학습의 앞 80% 동안 선형 감소 | `QConfig.eps_*` |
+| 에피소드 수 | 30,000 | `QConfig.episodes` |
+| 동시 진행 에피소드 | 64 | `QConfig.batch` |
+| 갱신 방식 | 상태 구간이 바뀔 때까지 행동을 유지하고 그때 갱신 | `QConfig.hold` |
+| 학습 중 평가 | 512 에피소드마다, 고정된 교전 300회, 탐색 없음 | `QConfig.eval_*` |
+| Q 초기값 | 0 | |

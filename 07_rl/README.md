@@ -23,6 +23,9 @@ conda activate rl-guidance
 | `python -m pytest -q` | 환경 검증 (E0) |
 | `python scripts/calibrate_pn.py` | PN 난이도 보정 (E1) |
 | `python scripts/plot_pn_trajectories.py` | PN 궤적 그림 |
+| `python scripts/sweep_pn_gain.py` | PN 항법 상수 비교 |
+| `python scripts/train_q.py` | Q-learning 학습 전체. 그룹 이름을 주면 그 그룹만 돌린다 |
+| `python scripts/plot_q.py` | Q-learning 그림과 요약 표. `results/models/q_runs.pkl`이 필요하다 |
 
 ## 구조
 
@@ -32,7 +35,9 @@ conda activate rl-guidance
 | `guidance/scenarios.py` | 초기 조건, 표적 기동 |
 | `guidance/pn.py` | PN, APN |
 | `guidance/env.py` | Gymnasium 환경 |
-| `guidance/rewards.py` | 보상 4가지 |
+| `guidance/rewards.py` | 보상 5가지 |
+| `guidance/discretize.py` | Q-learning용 상태·행동 이산화 |
+| `guidance/qlearning.py` | 표 형태 Q-learning |
 | `guidance/evaluate.py` | 몬테카를로 평가 |
 | `scripts/` | 실험 스크립트 |
 | `tests/` | 검증 테스트 |

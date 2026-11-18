@@ -95,6 +95,27 @@ def fig_learning_curve(by, ref):
     fig.savefig(FIG / "q_learning_curve.png", dpi=150)
 
 
+def fig_early(by, ref):
+    """The first 2048 episodes at a finer evaluation interval."""
+    runs = by[("early", "base")]
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+    curve(axes[0], runs, "greedy policy", "C0")
+    for (n, hr), ls in zip(ref.items(), ("--", ":")):
+        axes[0].axhline(hr, color="k", ls=ls, lw=1, label=f"PN N'={n}")
+    style(axes[0], "Hit rate")
+    curve(axes[1], runs, "greedy policy", "C0", key="miss_median")
+    axes[1].set_yscale("log")
+    axes[1].axhline(PRESETS["main"].hit_radius, color="r", lw=1, label="hit radius")
+    axes[1].set_title("Median miss distance")
+    axes[1].set_xlabel("training episodes")
+    axes[1].set_ylabel("miss [m]")
+    axes[1].grid(alpha=0.3, which="both")
+    axes[1].legend(fontsize=8)
+    fig.suptitle("Q-learning, first 2048 episodes (evaluated every 64 episodes)")
+    fig.tight_layout()
+    fig.savefig(FIG / "q_learning_curve_early.png", dpi=150)
+
+
 def fig_groups(by, name, title, panels):
     """One panel per (panel title, [(group, label, shown label)])."""
     fig, axes = plt.subplots(1, len(panels), figsize=(6 * len(panels), 4), squeeze=False)
@@ -172,7 +193,7 @@ def fig_q2_policy(by):
         ax.set_yticks(range(N_TGO), ["<0.5", "0.5-1", "1-2", "2-4", "4-7", ">7"])
     np.atleast_1d(axes)[0].set_ylabel("time to go [s]")
     fig.colorbar(im, ax=axes, label="greedy action")
-    fig.suptitle("Q2 policy: greedy action by PN demand and time to go (blank: never visited)")
+    fig.suptitle("Q2 policy: greedy action by PN demand and time to go (blank: never visited)", y=1.04)
     fig.savefig(FIG / "q_policy_q2.png", dpi=150, bbox_inches="tight")
 
 
@@ -221,6 +242,8 @@ def main():
     by = load()
     ref = pn_reference()
     fig_learning_curve(by, ref)
+    if ("early", "base") in by:     # optional group: python scripts/train_q.py early
+        fig_early(by, ref)
     fig_groups(by, "q_hyperparameters.png", "Q-learning hyperparameters (main setting)", [
         ("Learning rate", [("main", "base", "decaying from 0.5")] +
          [("alpha", f"constant {a:g}", f"constant {a:g}") for a in (0.01, 0.05, 0.1, 0.5)]),
