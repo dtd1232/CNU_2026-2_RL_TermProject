@@ -7,6 +7,3 @@ dependencies:
   - numpy
   - matplotlib
   - pytest
-  - pip:
-      - gymnasium
-      - stable-baselines3

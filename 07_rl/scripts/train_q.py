@@ -4,7 +4,11 @@ Writes results/models/q_runs.pkl, a list of runs. Each run holds its group,
 label, seed, Q-table, visit counts, learning history and snapshots.
 
 Usage: python scripts/train_q.py [group ...]     (no argument runs every group)
+
+Runs are spread over all CPU cores. Set the WORKERS environment variable to
+use fewer.
 """
+import os
 import pickle
 import sys
 from multiprocessing import Pool
@@ -51,7 +55,8 @@ def main():
     if OUT.exists():
         with open(OUT, "rb") as fh:
             runs = [r for r in pickle.load(fh) if r["group"] not in wanted]
-    with Pool(4) as pool:
+    workers = int(os.environ.get("WORKERS", os.cpu_count() or 1))
+    with Pool(min(workers, len(jobs))) as pool:
         for i, out in enumerate(pool.imap_unordered(job, jobs), 1):
             runs.append(out)
             h = out["history"]
