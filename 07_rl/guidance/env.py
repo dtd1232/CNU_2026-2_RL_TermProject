@@ -36,7 +36,8 @@ class InterceptEnv(gym.Env):
 
     def __init__(self, cfg: SimConfig | None = None, obs_kind: str = "obs_pn",
                  reward_kind: str = "terminal", scenario=scenarios.TRAIN_MIX,
-                 discrete: bool = False, gamma: float = 0.995):
+                 discrete: bool = False, gamma: float = 0.995,
+                 shaping_k: float | None = None):
         assert obs_kind in OBS_KINDS and reward_kind in rewards.REWARDS
         self.cfg = cfg or SimConfig()
         self.obs_kind = obs_kind
@@ -44,6 +45,7 @@ class InterceptEnv(gym.Env):
         self.scenario = scenario
         self.discrete = discrete
         self.gamma = gamma
+        self.shaping_k = shaping_k
         dim = 2 if obs_kind == "obs_pn" else 6
         self.observation_space = spaces.Box(-OBS_CLIP, OBS_CLIP, shape=(dim,), dtype=np.float32)
         self.action_space = (spaces.Discrete(len(DISCRETE_LEVELS)) if discrete
@@ -74,7 +76,8 @@ class InterceptEnv(gym.Env):
         f_next = self.sim.features()
         done = self.sim.done
         reward = rewards.step_reward(self.reward_kind, f_prev, f_next, done,
-                                     self.sim.init["r0"], self.cfg, self.gamma)[0]
+                                     self.sim.init["r0"], self.cfg, self.gamma,
+                                     u=u, k=self.shaping_k)[0]
         info = {}
         if done[0]:
             miss = self.sim.miss[0]

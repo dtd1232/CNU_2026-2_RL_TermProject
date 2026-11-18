@@ -55,7 +55,7 @@ def test_gymnasium_api(obs_kind, discrete):
     check_env(InterceptEnv(obs_kind=obs_kind, discrete=discrete), skip_render_check=True)
 
 
-@pytest.mark.parametrize("reward_kind", ["hit_only", "terminal", "potential", "los_rate"])
+@pytest.mark.parametrize("reward_kind", ["hit_only", "terminal", "potential", "los_rate", "effort"])
 def test_env_matches_batch_simulator(reward_kind):
     """Flying PN through the Gymnasium env gives the same miss as the batch run."""
     cfg = SimConfig(a_max_g=6.0, tau=0.25)
