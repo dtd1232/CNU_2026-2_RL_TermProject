@@ -55,21 +55,31 @@ def train(cfg: SimConfig, qc: QConfig, scenario=scenarios.TRAIN_MIX, snapshot_at
     q = np.zeros((n_states(qc.state_kind), len(ACTIONS)))
     visits = np.zeros_like(q)
     eval_init = scenarios.sample(np.random.default_rng(qc.eval_seed), qc.eval_episodes, cfg, scenario)
-    history = {k: [] for k in ("episodes", "epsilon", "hit_rate", "miss_median", "miss_mean", "train_hit_rate")}
+    history = {k: [] for k in ("episodes", "epsilon", "hit_rate", "miss_median", "miss_mean",
+                               "flight_time", "train_hit_rate", "train_return", "train_steps")}
     snapshots = {}
     pending = sorted(snapshot_at)
 
-    def evaluate(done_eps, eps, train_hit):
-        stats = summarize(run(cfg, greedy_policy(q, qc.state_kind, cfg), eval_init))
+    def evaluate(done_eps, eps, train):
+        """Greedy evaluation, plus the training statistics since the last one.
+
+        hit_rate, miss_* and flight_time come from the greedy policy on the fixed
+        evaluation set. train_* are averages over the training episodes, which
+        include exploration: hit rate, undiscounted return, guidance steps.
+        """
+        res = run(cfg, greedy_policy(q, qc.state_kind, cfg), eval_init)
+        stats = summarize(res)
         history["episodes"].append(done_eps)
         history["epsilon"].append(eps)
         history["hit_rate"].append(stats["hit_rate"])
         history["miss_median"].append(stats["miss_median"])
         history["miss_mean"].append(stats["miss_mean"])
-        history["train_hit_rate"].append(train_hit)
+        history["flight_time"].append(float(np.mean(res["t_final"])))
+        for key, value in zip(("train_hit_rate", "train_return", "train_steps"), train):
+            history[key].append(value)
 
-    evaluate(0, qc.eps_start, np.nan)
-    done_eps, next_eval, recent_hits = 0, qc.eval_every, []
+    evaluate(0, qc.eps_start, (np.nan, np.nan, np.nan))
+    done_eps, next_eval, recent = 0, qc.eval_every, []
     while done_eps < qc.episodes:
         while pending and pending[0] <= done_eps:
             snapshots[pending.pop(0)] = q.copy()
@@ -89,6 +99,7 @@ def train(cfg: SimConfig, qc: QConfig, scenario=scenarios.TRAIN_MIX, snapshot_at
         s_dec, a_dec = s, choose(s)         # state and action of the open decision
         ret = np.zeros(qc.batch)            # discounted reward since that decision
         disc = np.ones(qc.batch)
+        ep_return = np.zeros(qc.batch)      # undiscounted return of each episode
         while not sim.done.all():
             active = ~sim.done
             sim.step(ACTIONS[a_dec])
@@ -99,6 +110,7 @@ def train(cfg: SimConfig, qc: QConfig, scenario=scenarios.TRAIN_MIX, snapshot_at
                                     u=ACTIONS[a_dec], k=qc.shaping_k)
             miss = np.where(ended, sim.miss, 0.0)
             r = r + np.where(ended, rewards.terminal_reward(qc.reward_kind, miss, miss < cfg.hit_radius), 0.0)
+            ep_return += np.where(active, r, 0.0)
             ret = ret + disc * r
             disc = disc * qc.gamma
 
@@ -117,12 +129,13 @@ def train(cfg: SimConfig, qc: QConfig, scenario=scenarios.TRAIN_MIX, snapshot_at
             disc = np.where(decide, 1.0, disc)
             f = f2
 
-        recent_hits.append(np.mean(sim.miss < cfg.hit_radius))
+        recent.append((np.mean(sim.miss < cfg.hit_radius), np.mean(ep_return),
+                       np.mean(sim.t) / cfg.dt_guid))
         done_eps += qc.batch
         if done_eps >= next_eval or done_eps >= qc.episodes:
-            evaluate(done_eps, eps, float(np.mean(recent_hits)))
+            evaluate(done_eps, eps, tuple(float(v) for v in np.mean(recent, axis=0)))
             next_eval += qc.eval_every
-            recent_hits = []
+            recent = []
 
     for ep in pending:
         snapshots[ep] = q.copy()

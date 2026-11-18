@@ -61,19 +61,35 @@ def style(ax, title, ylabel="hit rate"):
 
 def fig_learning_curve(by, ref):
     base = by[("main", "base")]
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-    curve(axes[0], base, "Q-learning", "C0")
+    fig, axes = plt.subplots(2, 2, figsize=(12, 7.5))
+    ax = axes[0, 0]
+    curve(ax, base, "greedy policy", "C0")
+    curve(ax, base, "training episodes (with exploration)", "C1", key="train_hit_rate")
     for (n, hr), ls in zip(ref.items(), ("--", ":")):
-        axes[0].axhline(hr, color="k", ls=ls, lw=1, label=f"PN N'={n}")
-    style(axes[0], "Hit rate of the greedy policy")
-    curve(axes[1], base, "Q-learning", "C0", key="miss_median")
-    axes[1].set_yscale("log")
-    axes[1].axhline(PRESETS["main"].hit_radius, color="r", lw=1, label="hit radius")
-    axes[1].set_title("Median miss distance")
-    axes[1].set_xlabel("training episodes")
-    axes[1].set_ylabel("miss [m]")
-    axes[1].grid(alpha=0.3, which="both")
-    axes[1].legend(fontsize=8)
+        ax.axhline(hr, color="k", ls=ls, lw=1, label=f"PN N'={n}")
+    style(ax, "Hit rate")
+
+    ax = axes[0, 1]
+    curve(ax, base, "greedy policy", "C0", key="miss_median")
+    ax.set_yscale("log")
+    ax.axhline(PRESETS["main"].hit_radius, color="r", lw=1, label="hit radius")
+    ax.set_title("Median miss distance")
+    ax.set_ylabel("miss [m]")
+
+    ax = axes[1, 0]
+    curve(ax, base, "training episodes", "C1", key="train_return")
+    ax.set_title("Episode return (undiscounted)")
+    ax.set_ylabel("return")
+
+    ax = axes[1, 1]
+    curve(ax, base, "training episodes", "C1", key="train_steps")
+    ax.set_title("Episode length")
+    ax.set_ylabel("guidance steps")
+
+    for ax in axes.flat[1:]:
+        ax.set_xlabel("training episodes")
+        ax.grid(alpha=0.3, which="both")
+        ax.legend(fontsize=8)
     fig.suptitle("Q-learning on the main setting (state: 21 bins of PN demand, reward: los_rate)")
     fig.tight_layout()
     fig.savefig(FIG / "q_learning_curve.png", dpi=150)
